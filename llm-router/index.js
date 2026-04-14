@@ -19,100 +19,6 @@ async function getGoogleAccessToken() {
   return accessToken.token;
 }
 
-/**
- * OpenAI 요청 객체를 Anthropic Claude 요청 객체로 변환합니다.
- * @param {Object} openAiParams - OpenAI SDK 스타일의 요청 객체
- * @returns {Object} Anthropic SDK 스타일의 요청 객체
- */
-function convertOpenAiToClaude(openAiParams) {
-  const {
-    model,
-    messages,
-    stream,
-    max_tokens,
-    temperature,
-    top_p,
-    stop
-  } = openAiParams;
-
-  // 1. System 메시지 분리 (Claude는 별도 필드로 분리함)
-  const systemMessage = messages.find(m => m.role === 'system');
-  const systemPrompt = systemMessage ? systemMessage.content : undefined;
-
-  // 2. Chat 메시지 필터링 및 변환 (system 제외)
-  const claudeMessages = messages
-    .filter(m => m.role !== 'system')
-    .map(m => ({
-      role: m.role === 'assistant' ? 'assistant' : 'user', // OpenAI의 'user'와 'tool' 등은 문맥에 맞게 매핑 필요
-      content: m.content
-    }));
-
-  // 3. Claude 요청 객체 조립
-  const claudeParams = {
-    anthropic_version: 'vertex-2023-10-16', // Claude 버전
-    max_tokens: max_tokens || 4096, // Claude는 max_tokens가 필수인 경우가 많음
-    messages: claudeMessages,
-  };
-
-  // 선택적 파라미터 추가
-  if (systemPrompt) claudeParams.system = systemPrompt;
-  if (temperature !== undefined) claudeParams.temperature = temperature;
-  if (top_p !== undefined) claudeParams.top_p = top_p;
-//   if (stream !== undefined) claudeParams.stream = stream;
-  claudeParams.stream = false;
-  if (stop) claudeParams.stop_sequences = Array.isArray(stop) ? stop : [stop];
-
-  return claudeParams;
-}
-
-
-
-/**
- * Anthropic Claude 응답 객체를 OpenAI 형식으로 변환합니다.
- * @param {Object} claudeResponse - Claude Messages API의 응답 객체
- * @returns {Object} OpenAI Chat Completion 형식의 응답 객체
- */
-function convertClaudeToOpenAi(claudeResponse) {
-  return {
-    id: claudeResponse.id, // 'msg_...' 형태의 ID 유지
-    object: "chat.completion",
-    created: Math.floor(Date.now() / 1000), // Claude 응답에는 생성 시각이 없으므로 현재 시간 사용
-    model: claudeResponse.model,
-    choices: [
-      {
-        index: 0,
-        message: {
-          role: "assistant",
-          // Claude는 content가 배열 형태이므로 첫 번째 텍스트 블록 추출
-          content: claudeResponse.content
-            .filter(item => item.type === 'text')
-            .map(item => item.text)
-            .join('\n')
-        },
-        logprobs: null,
-        finish_reason: mapFinishReason(claudeResponse.stop_reason)
-      }
-    ],
-    usage: {
-      prompt_tokens: claudeResponse.usage.input_tokens,
-      completion_tokens: claudeResponse.usage.output_tokens,
-      total_tokens: claudeResponse.usage.input_tokens + claudeResponse.usage.output_tokens
-    }
-  };
-}
-
-/**
- * 종료 사유(Finish Reason) 매핑
- */
-function mapFinishReason(claudeReason) {
-  const reasonMap = {
-    "end_turn": "stop",
-    "max_tokens": "length",
-    "stop_sequence": "stop",
-    "tool_use": "tool_calls"
-  };
-  return reasonMap[claudeReason] || "stop";
-}
 
 
 
@@ -165,11 +71,6 @@ app.post('/chat/completions', async (req, res) => {
         req.body.model = targetmodel;  // update model with target modelid
         var dataToSend = req.body;
 
-        if( targetmodel.startsWith('claude') ){
-            dataToSend = convertOpenAiToClaude(dataToSend);
-            console.log(JSON.stringify(dataToSend, null, 2));
-
-        }
 
         const postData = JSON.stringify(dataToSend);
         console.log(JSON.stringify(postData, null, 2));
@@ -209,40 +110,17 @@ app.post('/chat/completions', async (req, res) => {
                 return; 
             }
 
-            if( targetmodel.startsWith('claude') ){
 
-                backendResponse.on('data', (chunk) => {
-                    responseBody += chunk;
-                });
+          // SSE Response Header
+          res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          });
 
-                // 3. 응답 수신이 완료되면 클라이언트에게 전송
-                backendResponse.on('end', () => {
-                    try {
-                        console.log('claude response: ' + responseBody);
-                        const openAiRes = convertClaudeToOpenAi(JSON.parse(responseBody));
-                        console.log(JSON.stringify(openAiRes, null, 2));
-
-                        const jsonResponse = JSON.parse(responseBody);
-                        // SSE 헤더 대신 일반 JSON 응답 전송
-                        res.status(200).json(jsonResponse);
-                    } catch (e) {
-                        console.error('JSON Parsing Error:', e);
-                        res.status(500).json({ error: 'Invalid JSON response from backend' });
-                    }
-                });
-
-
-            }else{
-                // SSE Response Header
-                res.writeHead(200, {
-                    'Content-Type': 'text/event-stream',
-                    'Cache-Control': 'no-cache',
-                    'Connection': 'keep-alive',
-                });
-
-                backendResponse.pipe(res);
+          backendResponse.pipe(res);
               
-            }
+
 
 
 
