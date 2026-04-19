@@ -1,5 +1,5 @@
 {
-  "name": "aigw-llm-router",
+  "name": "llm-router",
   "description": "Route request to Target",
   "version": "1.0.0",
   "private": true,
@@ -15,7 +15,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@google-cloud/vertexai": "^1.10.2",
-    "axios": "^1.13.6",
     "express": "^4.21.2",
     "google-auth-library": "^10.6.2",
     "properties-reader": "^3.0.1"

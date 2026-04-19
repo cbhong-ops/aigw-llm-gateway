@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SemanticCachePopulate async="false" continueOnError="false" enabled="true" name="SCP-aigw-text">
+  <DisplayName>SCP-aigw-text</DisplayName>
+  <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+  <SimilaritySearch>
+    <VertexAI>
+      <URL>https://us-central1-aiplatform.googleapis.com/v1/projects/{organization.name}/locations/us-central1/indexes/4715314989345275904:upsertDatapoints</URL>
+    </VertexAI>
+  </SimilaritySearch>
+  <TTLInSeconds>300</TTLInSeconds>
+</SemanticCachePopulate>

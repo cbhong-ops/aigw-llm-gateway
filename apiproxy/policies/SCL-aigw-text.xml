@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SemanticCacheLookup async="false" continueOnError="false" enabled="true" name="SCL-aigw-text">
+  <DisplayName>SCL-aigw-text</DisplayName>
+  <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+  <UserPromptSource>{aigw.prompt}</UserPromptSource>
+  <Embeddings>
+    <VertexAI>
+      <URL>https://us-central1-aiplatform.googleapis.com/v1/projects/{organization.name}/locations/us-central1/publishers/google/models/text-embedding-004:predict</URL>
+    </VertexAI>
+  </Embeddings>
+  <SimilaritySearch>
+    <VertexAI>
+      <URL>https://1256772912.us-central1-728548214479.vdb.vertexai.goog/v1/projects/{organization.name}/locations/us-central1/indexEndpoints/5187005477661179904:findNeighbors</URL>
+      <DeployedIndexID>apigee_aigw_cache_1766465951569</DeployedIndexID>
+      <Threshold>0.8</Threshold>
+    </VertexAI>
+  </SimilaritySearch>
+</SemanticCacheLookup>

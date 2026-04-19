@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage continueOnError="false" enabled="true" name="AM-request-aws-claude-sonnet-4">
+  <DisplayName>AM-request-aws-claude-sonnet-4</DisplayName>
+  <Properties/>
+  <Set>
+    <Payload contentType="application/json">
+      {
+        "anthropic_version":"bedrock-2023-05-31",
+        "messages":[{
+          "role":"user",
+          "content":[{
+            "type":"text",
+            "text":"{escapeJSON(aigw.prompt)}"
+          }]
+        }]
+      }
+      </Payload>
+  </Set>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+  <AssignTo createNew="false" transport="http" type="request"/>
+</AssignMessage>

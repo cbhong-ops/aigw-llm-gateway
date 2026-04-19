@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Quota continueOnError="false" enabled="true" name="Quota-enforce" type="flexi">
+  <DisplayName>Quota-enforce</DisplayName>
+  <Properties/>
+  <!-- <UseQuotaConfigInAPIProduct stepName="OAuthV2-Verify">
+  <DefaultConfig>
+    <Allow>1000</Allow>
+    <Interval>5</Interval>
+    <TimeUnit>minute</TimeUnit>
+  </DefaultConfig>
+</UseQuotaConfigInAPIProduct> -->
+<Allow countRef="verifyapikey.VA-APIKey.apiproduct.developer.quota.limit"/>
+<Interval ref="verifyapikey.VA-APIKey.apiproduct.developer.quota.interval"/>
+<TimeUnit ref="verifyapikey.VA-APIKey.apiproduct.developer.quota.timeunit"/>
+<!-- <Allow countRef="llm.quota.limit"/>
+<Interval ref="llm.quota.interval"/>
+<TimeUnit ref="llm.quota.timeunit"/> -->
+  <Identifier ref="aigw.userid"/>
+  <Distributed>true</Distributed>
+  <Synchronous>true</Synchronous>
+  <EnforceOnly>true</EnforceOnly>
+  <SharedName>aigw-token-quota</SharedName>
+</Quota>

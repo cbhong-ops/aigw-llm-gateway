@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<RaiseFault continueOnError="false" enabled="true" name="RF-DLP-Inspect">
+  <DisplayName>RF-DLP-Inspect</DisplayName>
+  <Properties/>
+  <FaultResponse>
+    <Set>
+      <Payload contentType="application/json">{"fault":{"faultstring":"PII detected - {dlp_inspect.infotypes}", "detail":{"errorcode":"dlp.sensitivedata.detected"}}}</Payload>
+      <StatusCode>400</StatusCode>
+      <ReasonPhrase>Bad Request</ReasonPhrase>
+    </Set>
+  </FaultResponse>
+  <ShortFaultReason>true</ShortFaultReason>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>
