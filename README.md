@@ -40,6 +40,7 @@ Routes traffic from Apigee to the Cloud Run backend securely within the VPC.
 
 ### 3. Apigee Proxy (`/apiproxy`)
 Manages authentication (OAuth2), quota, and acts as the entry point.
+*   **Configuration**: Before deploying, you must edit `apiproxy/targets/default.xml` to modify the `<Audience>` value to match your Cloud Run service's audience (usually the Cloud Run URL).
 *   **Deployment**: Run the `deploy_proxy.sh` script in the root directory.
     ```bash
     ./deploy_proxy.sh
