@@ -13,11 +13,11 @@ The overall request flow is as follows:
 ```mermaid
 graph TD
     Client[Streamlit Client App] -->|OAuth2 Token + API Request| Apigee[Apigee API Proxy]
-    Apigee -->|Secure Route| ILB[Internal Regional HTTP LB]
+    Apigee -->|Secure Route| ILB[Internal Regional Application LB]
     ILB -->|Serverless NEG| Router[LLM Router Cloud Run]
-    Router -->|Route to Provider| Gemini[Google Gemini API]
-    Router -->|Route to Provider| AzureOpenAI[Azure OpenAI API]
-    Router -->|Route to Provider| Anthropic[Anthropic API]
+    Router -->|Route to Provider| Gemini[Google Gemini Endpoint]
+    Router -->|Route to Provider| AzureOpenAI[Azure OpenAI Endpoint]
+    Router -->|Route to Provider| Anthropic[Anthropic ModelGarden Endpoint]
 ```
 
 ## Components and Deployment
